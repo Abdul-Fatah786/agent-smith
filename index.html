@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Pill Choice</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            height: 100%;
+            color: #00FF00;
+            font-family: 'Courier New', Courier, monospace;
+            background-color: black;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+        }
+
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+            z-index: 999;
+        }
+
+        .loader {
+            width: 320px;
+            height: 160px;
+            background-color: black;
+            border-radius: 8px;
+            padding: 16px;
+            color: #00FF00;
+            font-size: 14px;
+            overflow: hidden;
+            white-space: pre-wrap;
+        }
+
+        .cursor {
+            display: inline-block;
+            animation: blink 0.5s step-end infinite;
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .main-content {
+            display: none;
+        }
+
+        .top-heading {
+            font-size: 1.8em;
+            margin-top: 50px;
+            margin-bottom: 40px;
+            text-align: center;
+            color: #00FF00;
+            animation: flicker 1.5s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .pill-text-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+            margin: 20px auto;
+            max-width: 900px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            margin-bottom: 100px;
+        }
+
+        .pill-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 45%;
+            min-width: 300px;
+            text-align: left;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .pill img {
+            width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+            animation: rotatePill 8s infinite linear;
+        }
+
+        @keyframes rotatePill {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .pill img:hover {
+            transform: scale(1.1);
+        }
+
+        .hacking-container {
+            font-size: 1em;
+            line-height: 1.4em;
+            color: #00FF00;
+            font-family: 'Courier New', Courier, monospace;
+            text-shadow: 0 0 5px #00FF00;
+            white-space: pre-wrap;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .hacking-line {
+            overflow: hidden;
+            white-space: pre-wrap;
+            margin-bottom: 10px;
+            text-align: left;
+            animation: typing 5s steps(60) forwards, blink 0.7s infinite;
+        }
+
+        @keyframes typing {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: 100%;
+            }
+        }
+
+        @keyframes blink {
+            50% {
+                border-color: transparent;
+            }
+        }
+
+        .hacking-line.done {
+            animation: none;
+            border-right: none;
+        }
+
+        .highlighted {
+            animation: highlightText 2s ease-in-out forwards;
+        }
+
+        @keyframes highlightText {
+            0% {
+                opacity: 0.6;
+            }
+
+            100% {
+                opacity: 1;
+                text-shadow: 0 0 15px #00ff00, 0 0 30px #00ff00;
+            }
+        }
+
+        .bottom-heading {
+            margin-top: 30px;
+            font-size: 1.2em;
+            text-align: center;
+            color: #00FF00;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .pill-text-container {
+                flex-direction: column;
+                gap: 30px;
+                padding: 10px;
+            }
+
+            .pill-block {
+                width: 90%;
+            }
+
+            .pill img {
+                width: 120px;
+            }
+
+            .hacking-container {
+                font-size: 0.9em;
+            }
+
+            .bottom-heading {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loader" class="loader-container">
+        <div class="loader">
+            <pre id="text"></pre>
+            <span id="cursor" class="cursor">▋</span>
+        </div>
+    </div>
+
+    <div class="video-container">
+        <video autoplay muted loop>
+            <source src="vid.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content" class="main-content">
+        <div class="top-heading">Welcome to the choice of a lifetime...</div>
+
+        <div class="pill-text-container">
+            <div class="pill-block">
+                <a href="loading.html">
+                    <div class="pill">
+                        <img src="1.png" alt="Red Pill"> <!-- Blue pill image now has red pill text -->
+                    </div>
+                </a>
+                <div class="hacking-container">
+                    <div id="blue-text" class="hacking-line"></div> <!-- Blue pill text here -->
+                </div>
+            </div>
+            <div class="pill-block">
+                <a href="https://pump.fun/board" target="_blank">
+                    <div class="pill">
+                        <img src="2.png" alt="Blue Pill"> <!-- Red pill image now has blue pill text -->
+                    </div>
+                </a>
+                <div class="hacking-container">
+                    <div id="red-text" class="hacking-line"></div> <!-- Red pill text here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-heading">The choice is yours.</div>
+    </div>
+
+    <script>
+        // Typing effect for loader text
+        document.addEventListener("DOMContentLoaded", function () {
+            const fullText = 'Initializing hack...\nAccessing mainframe...\nBreaking firewalls...\nExtracting data...';
+            let currentText = '';
+            let index = 0;
+            const textElement = document.getElementById('text');
+            const cursorElement = document.getElementById('cursor');
+
+            // Function to type out the text one character at a time
+            function typeText() {
+                if (index < fullText.length) {
+                    currentText += fullText.charAt(index);
+                    textElement.textContent = currentText;
+                    index++;
+                    setTimeout(typeText, 50); // Adjust typing speed here
+                }
+            }
+
+            // Function to toggle cursor visibility
+            function toggleCursor() {
+                cursorElement.style.visibility = cursorElement.style.visibility === 'hidden' ? 'visible' : 'hidden';
+            }
+
+            // Start the typing effect
+            typeText();
+
+            // Toggle cursor every 500ms
+            setInterval(toggleCursor, 500);
+
+            // After the loader finishes, hide the loader and show the main content
+            setTimeout(function () {
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                // Enable scrolling after the loader finishes
+                document.body.style.overflow = 'auto';
+
+                // Start the typing effect for main content pills
+                typeLine('blue-text', 'Red Pill: Or, take the red pill. Enter a real rabbit hole of growth, a thriving community, and a project where you’ll prosper. The truth awaits.', 0);
+                typeLine('red-text', 'Blue Pill: Take the blue pill and return to PumpFun—a world of flashy scams, degens, and empty promises. Stay in the matrix of easy gains, but feel the burn.', 0);
+            }, 3000); // Adjust this timeout to match the duration of your loader
+        });
+
+        // Typing effect for main content
+        function typeLine(id, text, delay) {
+            let line = document.getElementById(id);
+            let index = 0;
+            setTimeout(() => {
+                let interval = setInterval(() => {
+                    line.textContent += text[index];
+                    index++;
+                    if (index === text.length) {
+                        clearInterval(interval);
+                        line.classList.add('done');
+                    }
+                }, 50); // Typing Speed
+            }, delay);
+        }
+    </script>
+</body>
+
+</html>

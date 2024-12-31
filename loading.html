@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Hacking Screen with Security</title>
+    <style>
+        /* Global Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Video Background */
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .video-container video {
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+        }
+
+        /* Terminal Container */
+        .content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .content h1 {
+            font-size: 1.8em;
+            overflow: hidden;
+            display: inline-block;
+            border-right: 2px solid #00ff00;
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                border-color: transparent;
+            }
+        }
+
+        /* Loading Bar */
+        .loading-bar {
+            width: 80%;
+            max-width: 600px;
+            height: 20px;
+            background: #002200;
+            border: 1px solid #00ff00;
+            margin: 20px auto;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loading-bar::after {
+            content: '';
+            display: block;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #00ff00, #004400);
+            animation: loadingAnimation 5s infinite;
+        }
+
+        @keyframes loadingAnimation {
+            0% {
+                width: 0%;
+            }
+
+            50% {
+                width: 100%;
+            }
+
+            100% {
+                width: 0%;
+            }
+        }
+
+        /* Error Notification */
+        .error-message {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            background: #00ff00;
+            color: #000;
+            text-align: center;
+            padding: 5px 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1em;
+            display: none;
+        }
+
+        /* Loading Footer Text */
+        .loading-text {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1em;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Header with Links */
+        .header-links {
+            position: absolute;
+            top: 30px;
+            left: 20px;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.2em;
+            white-space: nowrap;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .header-links a {
+            color: #00ff00;
+            text-decoration: none;
+        }
+
+        /* Typewriter effect for links */
+        .typewriter-text {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid #00ff00;
+            animation: typing 4s steps(30) 1s 1 normal both, blink 0.7s infinite;
+        }
+
+        @keyframes typing {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: 100%;
+            }
+        }
+
+        @keyframes blink {
+            50% {
+                border-color: transparent;
+            }
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .content h1 {
+                font-size: 1.4em;
+            }
+
+            .loading-bar {
+                height: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content h1 {
+                font-size: 1.2em;
+            }
+
+            .loading-bar {
+                height: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Video Background -->
+    <div class="video-container">
+        <video autoplay muted loop>
+            <source src="vid.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <!-- Header Links -->
+    <div class="header-links">
+        <a href="https://web.telegram.org" target="_blank" id="telegram-link" class="typewriter-text"></a>
+        <a href="https://twitter.com/yourtwitter" target="_blank" id="twitter-link" class="typewriter-text" style="visibility: hidden;"></a>
+        <a href="#" target="_blank" id="address-link" class="typewriter-text" style="visibility: hidden;"></a>
+    </div>
+
+    <!-- Error Message -->
+    <div class="error-message" id="error-message">⚠️ Unauthorized Action Detected!</div>
+
+    <!-- Hacking Style Loading Animation -->
+    <div class="content">
+        <h1 id="dynamic-text">Initializing System...</h1>
+        <div class="loading-bar"></div>
+        <div class="status-text" id="status-text">Loading core modules...</div>
+    </div>
+
+    <!-- Footer Loading Text -->
+    <div class="loading-text">LOADING...</div>
+
+    <script>
+        // Disable Right-Click
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        });
+
+        // Show Error on Left-Click
+        document.addEventListener('click', function (e) {
+            if (e.button === 0) { // Left-click
+                const errorMessage = document.getElementById('error-message');
+                errorMessage.style.display = 'block';
+                setTimeout(() => {
+                    errorMessage.style.display = 'none';
+                }, 2000);
+            }
+        });
+
+        // Disable Keyboard Shortcuts
+        document.addEventListener('keydown', function (e) {
+            if (
+                e.key === 'F12' || 
+                e.key === 'F11' || 
+                e.key === 'F5' ||
+                e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 'i' || e.key === 'I' || e.key === 's' || e.key === 'S')
+            ) {
+                e.preventDefault();
+            }
+        });
+
+        // Detect Developer Tools
+        (function detectDevTools() {
+            const element = new Image();
+            Object.defineProperty(element, 'id', {
+                get: function () {
+                    alert('⚠️ Developer Tools Detected! Closing Tab...');
+                    window.close();
+                    setTimeout(() => {
+                        window.location.href = 'about:blank';
+                    }, 100);
+                }
+            });
+            console.log('%c', element);
+        })();
+
+        // Dynamic Text Changes
+        const dynamicText = document.getElementById('dynamic-text');
+        const statusText = document.getElementById('status-text');
+
+        const messages = [
+            "Initializing System...",
+            "Bypassing Firewall...",
+            "Accessing Secure Database...",
+            "Decrypting Files...",
+            "Establishing Secure Connection...",
+            "Finalizing Setup..."
+        ];
+
+        let index = 0;
+
+        function changeText() {
+            dynamicText.textContent = messages[index];
+            statusText.textContent = messages[index];
+            index = (index + 1) % messages.length;
+        }
+
+        setInterval(changeText, 3000);
+
+        // Typewriter Effect for Links
+        const telegramLink = document.getElementById('telegram-link');
+        const twitterLink = document.getElementById('twitter-link');
+        const addressLink = document.getElementById('address-link');
+
+        const links = [
+            { id: 'telegram-link', text: 'Telegram: https://web.telegram.org/a', url: 'https://web.telegram.org/a' },
+            { id: 'twitter-link', text: 'Twitter: https://twitter.com/yourtwitter', url: 'https://twitter.com/yourtwitter' },
+            { id: 'address-link', text: 'Address: 123 Fake St., City, Country', url: '#' }
+        ];
+
+        function typeWriterEffect() {
+            let currentLinkIndex = 0;
+
+            function typeNextLink() {
+                const link = links[currentLinkIndex];
+                const element = document.getElementById(link.id);
+                let text = link.text;
+                let currentIndex = 0;
+
+                element.innerHTML = '';  // Clear any previous content
+                element.style.visibility = 'visible';
+
+                const typeInterval = setInterval(() => {
+                    element.innerHTML += text.charAt(currentIndex);
+                    currentIndex++;
+
+                    if (currentIndex === text.length) {
+                        clearInterval(typeInterval);
+                        currentLinkIndex++;
+                        if (currentLinkIndex < links.length) {
+                            setTimeout(typeNextLink, 1000);  // Wait before typing the next link
+                        }
+                    }
+                }, 100); // Typing speed
+            }
+
+            typeNextLink();
+        }
+
+        // Trigger typewriter effect on load
+        window.onload = typeWriterEffect;
+    </script>
+</body>
+
+</html>
